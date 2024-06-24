@@ -55,6 +55,14 @@ class ConfigurationCacheProblems(
     val listenerManager: ListenerManager
 
 ) : ProblemsListener, ProblemReporter, AutoCloseable {
+
+    companion object {
+      public 
+      lateinit var self: ConfigurationCacheProblems
+    }
+    init {
+      self = this
+    }
     private
     val summarizer = ConfigurationCacheProblemsSummary()
 
@@ -67,7 +75,7 @@ class ConfigurationCacheProblems(
     private
     var buildName: String? = null
 
-    private
+    public
     var isFailOnProblems = startParameter.failOnProblems
 
     private
@@ -262,7 +270,7 @@ class ConfigurationCacheProblems(
 
     private
     fun discardStateDueToProblems(summary: Summary) =
-        (summary.problemCount > 0 || incompatibleTasks.isNotEmpty()) && isFailOnProblems
+        (summary.problemCount > 0 || incompatibleTasks.isNotEmpty()) // && isFailOnProblems
 
     private
     fun hasTooManyProblems(summary: Summary) =

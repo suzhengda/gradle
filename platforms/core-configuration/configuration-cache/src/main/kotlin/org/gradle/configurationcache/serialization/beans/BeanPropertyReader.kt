@@ -33,6 +33,8 @@ import org.gradle.internal.state.ModelObject
 import java.io.IOException
 import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
+import org.gradle.configurationcache.problems.ConfigurationCacheProblems
+import org.gradle.api.logging.Logging
 
 
 class BeanPropertyReader(
@@ -111,9 +113,21 @@ suspend fun ReadContext.readPropertyValue(kind: PropertyKind, name: String, acti
                 throw passThrough
             } catch (e: InvocationTargetException) {
                 // unwrap ITEs as they are not useful to users
-                throw GradleException("Could not load the value of $trace.", e.cause)
+                // if( ConfigurationCacheProblems.self.isFailOnProblems ) {
+                  throw GradleException("Could not load the value of $trace.", e.cause)
+                // } else {
+                //   val logger = Logging.getLogger(ConfigurationCacheProblems::class.java)
+                //   logger.warn("1.Could not load the value of $trace." + e.cause.toString() )
+                // }
+                
             } catch (e: Exception) {
-                throw GradleException("Could not load the value of $trace.", e)
+                // if( ConfigurationCacheProblems.self.isFailOnProblems ) {
+                  throw GradleException("Could not load the value of $trace.", e)
+                // } else {
+                //   val logger = Logging.getLogger(ConfigurationCacheProblems::class.java)
+                //   logger.warn("2.Could not load the value of $trace." + e.toString() )
+                // }
+                
             }
         action(value)
     }
